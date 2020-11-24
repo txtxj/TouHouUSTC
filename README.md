@@ -1,1 +1,1 @@
-# *TouHouUSTC*
+# **TouHouUSTC**
