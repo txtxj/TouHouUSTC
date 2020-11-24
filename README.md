@@ -1,5 +1,5 @@
 # **TouHouUSTC**
-##Scene的编号：##
+## Scene的编号：
 - Title  0
  - Battle  1
  - Savings  2
