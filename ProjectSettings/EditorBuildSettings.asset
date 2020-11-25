@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Title/Title.unity
     guid: 3819294ddb0c6ea4bbe783330ea3c817
   - enabled: 1
-    path: Assets/Scenes/Battle/Battle.unity
+    path: Assets/Scenes/Battle/Battle1/Battle.unity
     guid: 78114e8097248f345a9cd123ee1b3e75
   - enabled: 1
     path: Assets/Scenes/Savings/Savings.unity
