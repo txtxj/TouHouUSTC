@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+
 public class HandlerBattle : MonoBehaviour
 {
     public void HdlBtContinueOnclk()
@@ -24,6 +25,10 @@ public class HandlerBattle : MonoBehaviour
     public void HdlBtQuitOnclk()
     {
         ReactLayoutBattle.Fade(2, 0);
+    }
+    public void HdlCvBoardOnclk()//BtEqualToGrid
+    {
+        StateGameplayEvent.tmp[0] = true;
     }
     void Start()
     {

@@ -10,12 +10,17 @@ public static class Configs
     public static int timeTransSceneInAndOut = 81;
     public static int scaleMinWindowFadeInAndOut = 0.88;//乘一百取int
     public static int frameRate = 75;*/
-    public static int[] Settings = new int[8] {8,114,88,75,0,0,0,0};//8
-    public static int[] Settings_tmp = new int[8] { 8, 81, 88, 75, 0, 0, 0, 0 };//8
+    public static int[] settings = new int[8] {8,114,88,75,0,0,0,0};//8
+    public static int[] settings_tmp = new int[8] { 8, 81, 88, 75, 0, 0, 0, 0 };//8
     /*/public static void InitDefault()
     {
-        Settings
+        settings
     }*/
+}
+
+public static class Story
+{
+
 }
 unsafe public class Loader
 {
@@ -33,7 +38,7 @@ unsafe public class Loader
         {
             BinaryReader reader = new BinaryReader(fileSettings);
             buffer = reader.ReadBytes(8*4);//8
-            fixed (int* tmp = &(Configs.Settings[0]))
+            fixed (int* tmp = &(Configs.settings[0]))
             {
                 p = (byte*)tmp;
             }
@@ -45,13 +50,13 @@ unsafe public class Loader
             reader.Close();
             for (int i = 0;i < 8;i++)//8
             {
-                Configs.Settings_tmp[i] = Configs.Settings[i];
+                Configs.settings_tmp[i] = Configs.settings[i];
             }
         }
         else
         {
             BinaryWriter writer = new BinaryWriter(fileSettings);
-            fixed (int* tmp = &(Configs.Settings[0])) {
+            fixed (int* tmp = &(Configs.settings[0])) {
                 p = (byte*)tmp;
             }
             for (int i = 0;i < 4*8;i++)//8
@@ -62,15 +67,18 @@ unsafe public class Loader
             writer.Close();
         }
         return true;
-    }
+    }//将文件读入设置文件 sav/settings.config 读入Configs.settings和Configs.settings_tmp
+
     public bool LoadGameSaving(string storyName)
     {
         return true;
     }
+
     public bool LoadStorySaving(string storyName)
     {
         return true;
     }
+
     public bool LoadStorySavings()
     {
         return true;

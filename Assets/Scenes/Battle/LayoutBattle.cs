@@ -3,13 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
 
 
 static class StateLayoutBattle
 {
-    public const int TTLCTRL = 8;
+    public const int TTLCTRL = 10;
     public static bool[,] isFading = new bool[2,TTLCTRL];
+    public static Tilemap grid;
+    public static int offset;
+    /*  gos[0] = cvPause;
+        gos[1] = cvSettings;
+        gos[3] = cvObstruct;
+        gos[2] = cvTransScene;
+        gos[4] = imgUstc;
+        gos[8] = cvMenuEncirclChess;
+    */
+
 }
 /*
  已用的：1 cvSettings,0 cvPause 3, cvObstruct
@@ -21,7 +32,22 @@ public static class ReactLayoutBattle
     {
         StateLayoutBattle.isFading[outOrIn,identifier] = true;
     }
-    
+    public static void EncirclChess(Vector3Int selectedTile, GameObject go)
+    {
+        go.transform.position = StateLayoutBattle.grid.CellToWorld(OldCoord(selectedTile));
+        Fade(8,1);
+    }
+
+    public static Vector3Int OldCoord(Vector3Int pos)
+    {
+        int offset = StateLayoutBattle.offset;
+        pos.x -= offset;
+        pos.z -= offset;
+        pos.y = -pos.x - pos.z;
+        pos.x = pos.x + (pos.y - (pos.y & 1)) / 2;
+        pos.z = 0;
+        return pos;
+    }
 }
 public class LayoutBattle : MonoBehaviour
 {
@@ -43,6 +69,7 @@ public class LayoutBattle : MonoBehaviour
     public GameObject imgTransSceneLeft;
     public GameObject imgTransSceneRight;
     public GameObject imgUstc;
+    public GameObject cvMenuEncirclChess;
     int second;
     GameObject[] gos = new GameObject[StateLayoutBattle.TTLCTRL];
     void FadeApplySingle(int num,bool isScale,bool isAlpha,int t)//num is the identifier of cv ,
@@ -117,6 +144,7 @@ public class LayoutBattle : MonoBehaviour
         FadeApplySingle(0, true, true , timeWindowFadeInAndOut);
         FadeApplySingle(1, true, true, timeWindowFadeInAndOut);
         FadeApplySingle(3, false, true, timeWindowFadeInAndOut);
+        FadeApplySingle(8, false, true, timeWindowFadeInAndOut);
     }
     void TransSceneApply()
     {
@@ -208,6 +236,7 @@ public class LayoutBattle : MonoBehaviour
         gos[3] = cvObstruct;
         gos[2] = cvTransScene;
         gos[4] = imgUstc;
+        gos[8] = cvMenuEncirclChess;
         fps = 0;//FPS
         second = DateTime.Now.Second;
     }

@@ -32,7 +32,7 @@ public class LayoutBase : MonoBehaviour
     bool ustc;
     CanvasGroup canvasGroup;
 
-    public int timeWindowFadeInAndOut;
+    public int timeWindowFadeInAndOut;//from settings
     public int timeTransSceneInAndOut;
     public float scaleMinWindowFadeInAndOut;
     public GameObject cvObstruct;
