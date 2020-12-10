@@ -29,7 +29,12 @@ public class HandlerBattle : MonoBehaviour
     public void HdlCvBoardOnclk()//BtEqualToGrid
     {
         StateGameplayEvent.tmp[0] = true;
-    }
+    }//点击棋盘
+    public void HdlImgOnEEE(int idEop)
+    {
+        ReactCharaInfo.DetaileOprt(idEop/10, idEop%10);
+    }//鼠标移出入
+    
     void Start()
     {
         

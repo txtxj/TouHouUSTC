@@ -10,12 +10,13 @@ public static class StateGameplayEvent
 }
 public class Character
 {
-	private int Num,Die,Lv,Exp,Mgpa,Gpa,Atk,Def,Mag,Tec,Agi,Mov,Luk,Wgt,Rid;
+	private int Num,Role,Die,Lv,Exp,Mgpa,Gpa,Atk,Def,Mag,Tec,Agi,Mov,Luk,Wgt,Rid;
 	private int X,Z;
 	public int[] bag;
 	public Character()
 	{
 		num = 0;
+		role = 0;
 		die = 0;
 		lv = 1;
 		exp = 0;
@@ -31,12 +32,16 @@ public class Character
 		wgt = 10;
 		rid = 1;
 		bag = new int[3];
-		
 	} 
 	public int num
 	{
 		get{return Num;}
 		set{Num=value;}
+	}
+	public int role
+	{
+		get { return Role; }
+		set { Role = value; }
 	}
 	//0->没死
 	//1->死了
@@ -476,8 +481,12 @@ public class GameplayEvent : MonoBehaviour
 		if (status == 2 && StateGameplayEvent.tmp[0])
 		{
 			Vector3Int destination = ClickToCoord();
-			globalDestination = destination;
-			Debug.Log("Destination " + destination);
+			Debug.Log(destination);
+			if (destination == selectedTile)
+			{
+				status = 1;
+				return;
+			}
 			List<Vector3Int> TransPath = Dfs(destination);
 			int len = TransPath.Count;
 			Vector3[] GlobalPath = new Vector3[len];
@@ -487,15 +496,16 @@ public class GameplayEvent : MonoBehaviour
 			}
 			Owner[destination.x, destination.z] = Owner[selectedTile.x, selectedTile.z];
 			Owner[selectedTile.x, selectedTile.z] = 0;
-			Move(Owner[destination.x, destination.z],GlobalPath,4);
+			CharacterList[Owner[destination.x, destination.z]].x = destination.x;
+			CharacterList[Owner[destination.x, destination.z]].z = destination.z;
+			Move(Owner[destination.x, destination.z], GlobalPath, len);
 			//移动后选择进行UI操作，status变为4
 			//临时测试，把statue改成了1
-			status = 4;
-			DateTime timeTmp = DateTime.Now;
-			startTime = timeTmp.Second;
-			StateGameplayEvent.tmp[0] = false;
+			status = 1;
+			ReactCharaInfo.Open(CharacterList[Owner[destination.x, destination.z]]);
 			return;
 		}
+
 
 		//显示地形和敌人攻击范围
 		if (status == 3)
