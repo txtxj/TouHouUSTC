@@ -435,33 +435,32 @@ public class GameplayEvent : MonoBehaviour
     }
 
 
-    // Update is called once per frame
-    void Update()
-    {
+	// Update is called once per frame
+	// Update is called once per frame
+	void Update()
+	{
 		//初状态
 		if ((status == 0 || status == 1) && StateGameplayEvent.tmp[0])
 		{
 			StateGameplayEvent.tmp[0] = false;
 			selectedTile = ClickToCoord();
-			Debug.Log("/*/Cell Relative coo "+selectedTile);
+			Debug.Log(selectedTile);
 			int x = selectedTile.x;
 			int z = selectedTile.z;
-			// ViewCell(selectedTile);**
+			// ViewCell(selectedTile);
 			if (Owner[x, z] == 0)
 			{
-				//只显示地形  
+				//只显示地形
 				status = 1;
-				Debug.Log("Void Void VVV/*/ Cell Status "+status);
+				Debug.Log(status);
 				return;
 			}
 			if (Owner[x, z] > 0)
 			{
 				//显示地形、玩家方棋子信息和移动范围，并准备开始移动
-				//己方棋子选中
 				status = 2;
 				Dijkstra(selectedTile);
-				
-				Debug.Log("Cell Status "+status);
+				Debug.Log(status);
 				return;
 			}
 			if (Owner[x, z] < 0)
@@ -469,10 +468,9 @@ public class GameplayEvent : MonoBehaviour
 				//显示地形、敌方棋子信息和移动范围
 				status = 3;
 				Dijkstra(selectedTile);
-				Debug.Log("Cell Status " + status);
+				Debug.Log(status);
 				return;
 			}
-			
 		}
 
 		//选择棋子时，立刻执行Dijkstra
@@ -480,6 +478,7 @@ public class GameplayEvent : MonoBehaviour
 		//所以此处不需要再求最短路
 		if (status == 2 && StateGameplayEvent.tmp[0])
 		{
+			StateGameplayEvent.tmp[0] = false;
 			Vector3Int destination = ClickToCoord();
 			Debug.Log(destination);
 			if (destination == selectedTile)
@@ -502,10 +501,8 @@ public class GameplayEvent : MonoBehaviour
 			//移动后选择进行UI操作，status变为4
 			//临时测试，把statue改成了1
 			status = 1;
-			ReactCharaInfo.Open(CharacterList[Owner[destination.x, destination.z]]);
 			return;
 		}
-
 
 		//显示地形和敌人攻击范围
 		if (status == 3)
@@ -513,16 +510,11 @@ public class GameplayEvent : MonoBehaviour
 
 		}
 
-        //显示游戏内UI，进行角色操作
-        
+		//显示游戏内UI，进行角色操作
 		if (status == 4)
 		{
-			if (!flagCvMenuEncirclChess&&(DateTime.Now.Second-startTime+60)%60 == 3)
-			{
-				ReactLayoutBattle.EncirclChess(globalDestination, cvMenuEncirclChess);
-				flagCvMenuEncirclChess = true;
-			}
-			
+
 		}
-    }
+	}
+
 }
