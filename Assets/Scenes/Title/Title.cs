@@ -26,7 +26,7 @@ public static class ReactTitle
 }
 public class Title : MonoBehaviour
 {
-    Loader loader = new Loader();//实例化加载器
+    Loader loader = Configs.loader;//实例化加载器
     float[] tmp = new float[8];
     int[] count = new int[8];
     GameObject[] gos = new GameObject[8];
@@ -37,6 +37,7 @@ public class Title : MonoBehaviour
     float scaleMinWindowFadeInAndOut = Configs.settings[2] / 100f;
 
     public GameObject cvSavings;
+    public GameObject cvNoSav;
 
     void FadeApplySingle(int num, bool isScale, bool isAlpha, int t)//num is the identifier of cv ,
     {
@@ -113,6 +114,7 @@ public class Title : MonoBehaviour
     void FadeApply()
     {
         FadeApplySingle(0,true,true,timeWindowFadeInAndOut);
+        FadeApplySingle(1, true, true, timeWindowFadeInAndOut);
         if (StateTitle.isFading[0,7])
         {
             StartCoroutine(loadScene(3));
@@ -130,9 +132,6 @@ public class Title : MonoBehaviour
     AsyncOperation async;
     IEnumerator loadScene(int scene)
     {
-        yield return new WaitForEndOfFrame();
-        //yield return new WaitForSeconds(1);
-        //async = Application.LoadLevelAsync(1);
         async = SceneManager.LoadSceneAsync(scene);
         yield return async;
     }
@@ -146,8 +145,10 @@ public class Title : MonoBehaviour
     void Start()
     {
         loader.LoadSettings();
+        loader.LoadRoleSpriteFromFile(2);//
         applySettings();
         gos[0] = cvSavings;
+        gos[1] = cvNoSav;
     }
 
     // Update is called once per frame

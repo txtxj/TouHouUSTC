@@ -40,6 +40,7 @@ public class LayoutBase : MonoBehaviour
     public GameObject cvTransScene;
     public GameObject imgTransSceneLeft;
     public GameObject imgTransSceneRight;
+    bool isHaveLoadScene = false;
 
     void FadeApplySingle(int num, bool isScale, bool isAlpha, int t)//num is the identifier of cv ,
     {
@@ -174,7 +175,12 @@ public class LayoutBase : MonoBehaviour
             //SceneManager.LoadScene(1);//
             ReactLayoutBattle.Fade(2, 1);//
             StateLayoutBattle.isFading[0, 4] = true;
-            StartCoroutine(loadScene(1)); 
+            if (!isHaveLoadScene)
+            {
+                isHaveLoadScene = true;
+                StartCoroutine(loadScene(1));
+            }
+            
             
             //cvTransScene.gameObject.SetActive(false);//
         }
@@ -182,7 +188,6 @@ public class LayoutBase : MonoBehaviour
     AsyncOperation async;
     IEnumerator loadScene(int scene)
     {
-        yield return new WaitForEndOfFrame();
         yield return new WaitForSeconds(1);
         //async = Application.LoadLevelAsync(1);
         async = SceneManager.LoadSceneAsync(scene);
