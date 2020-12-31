@@ -36,7 +36,9 @@ public static class StateGameplayEvent //无法get set，用完手动置false
 
 public class Character
 {
+	//人物编号
 	public int Num;
+	//图片，是否死亡，是否行动完毕，防御状态，等级，经验，最大经验值，最大生命，生命，攻击，防御，最大科技，科技，敏捷，移动，幸运，负重，载具
 	private int Role, Die, Over, Pro, Lv, Mexp, Exp, Mgpa, Gpa, Atk, Def, Mmag, Mag, Tec, Agi, Mov, Luk, Wgt, Rid;
 	private int X, Z;
 	public Item[] bag;
@@ -176,6 +178,7 @@ public class Character
 		{
 			p = p * 3 / 2;
 		}
+		//最大生命值不能超过33
 		while (mgpa < 33 && rd.Next(100) < p && p > 0)
 		{
 			mgpa += 1;
@@ -225,10 +228,13 @@ public class Character
 			Debug.Log("luk++");
 		}
 	}
+	//获取坐标
 	public Vector3Int GetPosition()
 	{
 		return new Vector3Int(x, 0, z);
 	}
+	//道具的可用状态
+	//三个值分别为：是否可用，是否可卸下，是否可丢弃
 	public bool[] ItemAvailable(int index)
 	{
 		bool[] avail = new bool[3];
@@ -271,6 +277,7 @@ public class Character
 	//Gpa, Mmag, Mag, Atk, Def, Agi
 	//Character A
 	//A.UseItem(1);
+	//使用道具，并将该道具换为装备状态或将其置空
 	public void UseItem(int index)
 	{
 		Debug.Log("Item used");
@@ -303,10 +310,12 @@ public class Character
 		}
 
 	}
+	//丢弃道具，置空
 	public void DiscardItem(int index)
 	{
 		bag[index] = new Item();
 	}
+	//交换武器，交换后应当注意刷新攻击范围
 	public void ChangeWeapon(int index)
 	{
 		//始终保证arsenal[0]是现在正在装备的武器
@@ -324,6 +333,7 @@ public class Weapon
 	private bool IsMag;
 	//攻击力(atk),攻击范围(rng),重量(wgt),命中率(hr),暴击率(cr)
 	private int Rng, Wgt, Hr, Cr;
+	//武器描述和图像
 	public string des = "WeaponDescription", img = "0";
 
 	public Weapon()
@@ -377,6 +387,7 @@ public class Item
 	private int Wgt;
 	//该道具是否可取消使用
 	private bool Wearable, On;
+	//道具描述和图片
 	public string des = "ItemDescription", img = "0";
 	public Item()
 	{
@@ -440,17 +451,21 @@ public class Item
 
 unsafe public class GameplayEvent : MonoBehaviour
 {
+	//定位，显示人物与环形菜单
 	public Tilemap grid;
 	public GameObject prefabCharacter;
 	public GameObject cvMenuEncirclChess;
 
+	//显示坐标相关
 	public GameObject prefabText;
 	public GameObject canvas;
 
+	//显示范围相关
 	public GameObject prefabAvailable;
 	public GameObject prefabAttack;
 	public GameObject prefabFriend;
 
+	//棋盘基本参数
 	public int length;
 	public int width;
 	public int offset;
@@ -463,8 +478,10 @@ unsafe public class GameplayEvent : MonoBehaviour
 	public int numWeapon;
 	public int uLevel;
 
+	//有限状态自动机
 	public int status;
 
+	//回合开始提示
 	public GameObject playerphase;
 	public GameObject enemyphase;
 
@@ -495,12 +512,14 @@ unsafe public class GameplayEvent : MonoBehaviour
 
 	Vector3Int selectedTile;
 
+	//这几个值用上面的表算出来，不用存
 	int enemymoved;
 	int totlenemy;
 	int totlplayer;
 	Character globalEnemy;
 	Character globalCharacter;
 
+	//计分版
 	public int score;
 	public int round;
 	public GameObject gameover;
@@ -516,6 +535,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 	bool flagCvMenuEncirclChess;
 	bool flagattack;
 
+	//攻击敌人时的选择
 	int atkselected;
 	int atktemp;
 
@@ -538,6 +558,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 		new Vector3Int(0,0,1),
 		new Vector3Int(1,0,0),
 	};
+	//当攻击距离为2时的邻接表
 	List<Vector3Int> AttackDirections = new List<Vector3Int>
 	{
 		new Vector3Int(-2,0,0),
@@ -582,6 +603,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 		{3,2,2}
 	};
 
+	//地形对命中率的修正
 	float[] CellHitRate = new float[9]
 	{
 		0f, 0.2f, 0.1f, 0.25f, -0.2f, 0f, 0f, -0.15f, 0f
@@ -606,11 +628,13 @@ unsafe public class GameplayEvent : MonoBehaviour
 		return movecost[MapCells[x, z], rid];
 	}
 
+	//变量数组链表初始化
 	void ListsInitial()
 	{
 		score = 0;
 		round = 1;
 
+		//刚开始先放音乐
 		status = -2;
 
 		length = 100;
@@ -641,10 +665,13 @@ unsafe public class GameplayEvent : MonoBehaviour
 		Distance = new int[length, width];
 		Owner = new int[length, width];
 
+		//显示范围
 		MoveRange = new List<GameObject>();
 		AttackRange = new List<GameObject>();
 
 		StateLayoutBattle.offset = offset;
+
+		//初始化人物表
 		for (int i = 0; i < numPeople; i++)
 		{
 			CharacterList[i] = new Character();
@@ -680,7 +707,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 				weapon = WeaponList[0],
 			};
 			CharacterList[0] = hero;
-			//李天梭
+			//李天梭，刺客
 			hero = new Character()
 			{
 				num = 1,
@@ -708,7 +735,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 				weapon = WeaponList[2],
 			};
 			CharacterList[1] = hero;
-			//陈伟坤
+			//陈伟坤，坦克
 			hero = new Character()
 			{
 				num = 2,
@@ -736,7 +763,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 				weapon = WeaponList[1],
 			};
 			CharacterList[2] = hero;
-			//灵梦
+			//灵梦，法师
 			hero = new Character()
 			{
 				num = 3,
@@ -916,6 +943,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 		}
 	}
 
+	//从文件读地图信息
 	bool LoadMapFromFile(int num_map)
 	{
 		int[,] mapStds = new int[,] { { 42, 42, 17, 22 } };
@@ -954,9 +982,11 @@ unsafe public class GameplayEvent : MonoBehaviour
 					}
 				}
 			}
+			//好习惯
 			br.Close();
 			return true;
 		}
+		//Debug
 		catch (IOException e)
 		{
 			return false;
@@ -993,6 +1023,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 				Vector3 upos = CharacterSprites[uchar.num].transform.position;
 				CharacterSprites[uchar.num].transform.Translate(globalZero - upos, Space.World);
 				Debug.Log("uchar.num" + uchar.num.ToString());
+				//注意改颜色
 				if (uchar.over == 1)
 				{
 					CharacterSprites[uchar.num].GetComponent<SpriteRenderer>().color = new Color32(168, 168, 168, 255);
@@ -1011,6 +1042,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 				Vector3 globalZero = grid.CellToWorld(OldCoord(zero));
 				Vector3 upos = EnemySprites[uchar.num].transform.position;
 				EnemySprites[uchar.num].transform.Translate(globalZero - upos, Space.World);
+				//不能在敌方回合存档，所以不用改颜色
 				RefreshChessSlider(-uchar.num);
 			}
 
@@ -1264,6 +1296,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 			//这个地方没人！
 			return;
 		}
+		//初始化为全不通行
 		for (int i = 0; i < length; i++)
 		{
 			for (int j = 0; j < width; j++)
@@ -1309,6 +1342,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 	}
 
 	//求完单源最短路之后，找到起点到目标的一条路径
+	//假DFS
 	List<Vector3Int> Dfs(Vector3Int pos, int rid, int turn)
 	{
 		List<Vector3Int> Path = new List<Vector3Int>();
@@ -1318,6 +1352,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 			foreach (Vector3Int dir in Directions)
 			{
 				Vector3Int upos = pos + dir;
+				//判断这个格子是否可走，防止移动动画不合理
 				if (Distance[pos.x, pos.z] - Distance[upos.x, upos.z] == MoveCost(pos.x, pos.z, rid, turn))
 				{
 					Path.Insert(0, upos);
@@ -1605,6 +1640,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 		int dam = 0;
 		int exp = 0;
 
+		//攻击方式，与动画有关
 		int tool1 = A.weapon.isMag ? 2 : (A.weapon.rng == 2 ? 1 : 0);
 		int tool2 = B.weapon.isMag ? 2 : (B.weapon.rng == 2 ? 1 : 0);
 
@@ -2087,7 +2123,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 					}
 				}
 			}
-			//显示
+			//显示移动范围
 			foreach (Vector3Int dir in Available)
 			{
 				GameObject usprite;
@@ -2105,6 +2141,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 				usprite.transform.Translate(uglobal - upos);
 				MoveRange.Add(usprite);
 			}
+			//显示攻击范围
 			foreach (Vector3Int place in Available)
 			{
 				if (CharacterList[num].weapon.rng == 1 || CharacterList[num].weapon.isMag == true)
@@ -2179,7 +2216,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 					}
 				}
 			}
-			//显示
+			//显示移动范围
 			foreach (Vector3Int dir in Available)
 			{
 				GameObject usprite;
@@ -2360,6 +2397,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 		return 0;
 	}
 
+	//显示现在是谁的回合
 	public void ShowPhase(int num)
 	{
 		totlMoveTime = 60;//0.8 * 75
@@ -2376,12 +2414,15 @@ unsafe public class GameplayEvent : MonoBehaviour
 		}
 	}
 
+	//呼出游戏结束面板
 	public void GameOver()
 	{
 		gameover.gameObject.SetActive(true);
 		obstruct.gameObject.SetActive(true);
 		status = 18;
 	}
+
+	//保存存档
 	public int[] CollectSav(int nMe, int nEne)
 	{
 		Debug.Log("CollectSav");
@@ -2445,6 +2486,7 @@ unsafe public class GameplayEvent : MonoBehaviour
 		return sav;
 	}//取得游戏要存档的int[]
 
+	//读取存档
 	public bool IssueSav(int[] sav)
 	{
 		int po = 2;
@@ -2501,6 +2543,9 @@ unsafe public class GameplayEvent : MonoBehaviour
 		ReactLayoutBattle.diaProcs = sav[po + 3];
 		return true;
 	}//按存档初始化
+
+	//开始游戏初始化一下
+	//开public用来读档的时候调用
 	public void Start()
 	{
 		stepTime = Configs.settings[4] / 100f;
@@ -2524,6 +2569,7 @@ unsafe public class GameplayEvent : MonoBehaviour
         	}
         }
 		ListsInitial();
+		//从存档进入不用播放剧情
         if (Configs.isFromSavIn || Configs.isFromSavOut)
         {
 			status = 0;

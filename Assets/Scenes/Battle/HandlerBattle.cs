@@ -172,25 +172,25 @@ public class HandlerBattle : MonoBehaviour
         }
         StateGameplayEvent.roundMenu[i] = true;
         Debug.Log("EN");
-    }
+    }//角色移动后弹出的环形菜单被点击
 
 
     public void HdlNextDialogOnclk()
     {
         ReactLayoutBattle.NextDialog();
-    }
+    }//下一对话
 
     public void HdlBtSaveSavOnclk()
     {
         Configs.loader.SaveGameSaving(Configs.storyName, GameObject.Find("Main Camera").GetComponent<GameplayEvent>().CollectSav(3, 5));//3,5
     }
-
+    //保存存档按钮被点击
     public void HdlBtReadSavOnclk()
     {
         Configs.isFromSavIn = true;
         GameObject.Find("Main Camera").GetComponent<GameplayEvent>().Start();
     }
-
+    //读取存档按钮被点击
 
 
 

@@ -5,49 +5,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class Configs
+public static class Configs//存放各种游戏内全局变量的静态类
 {
-    /*public static int timeWindowFadeInAndOut = 8;
-    public static int timeTransSceneInAndOut = 81;
-    public static int scaleMinWindowFadeInAndOut = 0.88;//乘一百取int
-    public static int frameRate = 75;*/
-    public static Loader loader = new Loader();
-    public static int[] settings = new int[8] {8,114,88,75,25,0,0,0};//8
-    public static int[] settings_tmp = new int[8] { 8, 81, 88, 75, 25, 0, 0, 0 };//8
-    public static Sprite[] CharacterSprites = new Sprite[10];//
-    public static Sprite[] LevelSprites = new Sprite[6];//
-    public static Sprite[] WeaponSprites = new Sprite[10];
-    public static Sprite[] ItemSprites = new Sprite[10];
-    public static int[] stageDiaNum_tmp = new int[8];
-    public static string[] dialogs_tmp = new string[92];
-    public static string[] diaPics_tmp = new string[92];
-    public static string storyName = "test";//
-    public static bool isFromSavOut = false;
-    public static bool isFromSavIn = false;
-    public static int uLevel = 1;//
-    /*/public static void InitDefault()
-    {
-        settings
-    }*/
-}
-
-public static class Story
-{
-
-}
-unsafe public class Loader
-{
-    bool exit = File.Exists(@"sav/settings.conf");
-    string pathSettings = "sav/settings.conf";
     
+    public static Loader loader = new Loader();//实例化加载器
+    public static int[] settings = new int[8] {8,114,88,75,25,0,0,0};//初始设置
+    public static int[] settings_tmp = new int[8] { 8, 81, 88, 75, 25, 0, 0, 0 };//临时设置
+    public static Sprite[] CharacterSprites = new Sprite[10];//角色图片sprite数组
+    public static Sprite[] LevelSprites = new Sprite[6];//等级图片sprite数组
+    public static Sprite[] WeaponSprites = new Sprite[10];//武器图片sprite数组
+    public static Sprite[] ItemSprites = new Sprite[10];//道具图片数组
+    public static int[] stageDiaNum_tmp = new int[8];//各阶段对话数量
+    public static string[] dialogs_tmp = new string[92];//对话内容的字符串数组
+    public static string[] diaPics_tmp = new string[92];//各个对话的配图的图片文件名
+    public static string storyName = "test";//存档名称
+    public static bool isFromSavOut = false;//是否从战局外读入战局存档
+    public static bool isFromSavIn = false;//是否从战局内读入战局存档
+    public static int uLevel = 1;//当前关卡数
+}
 
-    //FileStream fileGameSaving = new File
-    public bool LoadSettings()
+unsafe public class Loader//加载器 (非静态类) 用于游戏与文件的交互
+{
+    bool exit = File.Exists(@"sav/settings.conf");//判断配置文件是否存在
+    string pathSettings = "sav/settings.conf";
+
+    public bool LoadSettings()//加载设置方法 设置存入
     {   
         FileStream fileSettings = new FileStream(pathSettings, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         byte[] buffer = new byte[4*8];//8
         byte* p;
-        if (exit)
+        if (exit)//配置文件存在则读入
         {
             BinaryReader reader = new BinaryReader(fileSettings);
             buffer = reader.ReadBytes(8*4);//8
@@ -66,7 +53,7 @@ unsafe public class Loader
                 Configs.settings_tmp[i] = Configs.settings[i];
             }
         }
-        else
+        else //不存在则写入默认设置
         {
             BinaryWriter writer = new BinaryWriter(fileSettings);
             fixed (int* tmp = &(Configs.settings[0])) {
@@ -139,7 +126,7 @@ unsafe public class Loader
         return true;
     }//保存战局
 
-    public bool LoadStory(int scene)
+    public bool LoadStory(int scene)//加载故事情节的对话及图片
     {
         StreamReader sr = new StreamReader("Assets/Resources/Story/scene" + scene.ToString(), Encoding.Default);
         String line;
@@ -176,16 +163,9 @@ unsafe public class Loader
         Debug.Log(Configs.stageDiaNum_tmp[1]);
         return true;
     }
-    public bool LoadStorySaving(string storyName)
-    {
-        return true;
-    }
 
-    public bool LoadStorySavings()
-    {
-        return true;
-    }
-    public bool LoadRoleSpriteFromFile(int n)
+
+    public bool LoadRoleSpriteFromFile(int n) //自文件读入sprite图
     {
         Texture2D texture;
         FileStream fileStream;
@@ -243,8 +223,8 @@ unsafe public class Loader
             Debug.Log("LoadRoleSpriteFromFile  F A I L ");
             return false;
         }
-    }
-    public bool LoadWeaponAndItemSpriteFromFile()
+    }//自文件读入sprite图
+    public bool LoadWeaponAndItemSpriteFromFile()//自图片文件读入武器道具的sprite图
     {
         Texture2D texture;
         FileStream fileStream;
@@ -302,5 +282,5 @@ unsafe public class Loader
             Debug.Log("LoadRoleSpriteFromFile  F A I L ");
             return false;
         }
-    }
+    }//自图片文件读入武器道具的sprite图
 }

@@ -8,11 +8,12 @@ using UnityEngine.SceneManagement;
 
 using static ReactLayoutBattle;
 
-//此文件代码的结构和Layoutbattle不同
-public static class ReactCharaInfo
+//此文件控制角色/地形信息窗口
+
+public static class ReactCharaInfo//角色信息窗口
 {
-    public static bool[,] isFading = new bool[2, 48];
-    public static string[] landDescription = new string[]{
+    public static bool[,] isFading = new bool[2, 48];//记录各物体是否在进行渐入渐出效果 index1：0代表渐出 1代表渐入 index2：各物体的编号 详见Start()方法
+    public static string[] landDescription = new string[]{//对每个地形的描述
         "平地",
         "小树林 闪避+20%",
         "废墟 闪避+10%",
@@ -23,20 +24,20 @@ public static class ReactCharaInfo
         "火 闪避-10% 每回合损失20%Mgpa",
         "丘陵"
     };
-    public static GameObject[] gos = new GameObject[48];
-    private static Sprite[] roleImages = new Sprite[16];//精灵
-    public static Character charatmp_charainfo;
-    private static Color32 DefaultColor = new Color32(255, 129, 129, 255);
-    private static Color32 SelectedColor = new Color32(240, 60, 60, 255);
+    public static GameObject[] gos = new GameObject[48];//需要被控制的GameObject数组
+    private static Sprite[] roleImages = new Sprite[16];//角色sprite数组
+    public static Character charatmp_charainfo;//当前选定的Character人物   public class Character 在GameplayEvent.cs中定义
+    private static Color32 DefaultColor = new Color32(255, 129, 129, 255);//道具或武器的选项未被选中时的默认颜色
+    private static Color32 SelectedColor = new Color32(240, 60, 60, 255);//道具或武器的选项被选中时的颜色
     public static void Init(GameObject[] gos_tmp_charainfo, Sprite[] roleImages_tmp_charainfo)
     {
         roleImages[0] = roleImages_tmp_charainfo[0];
         gos = gos_tmp_charainfo;
-    }
+    }//进入游戏后以上变量的初始化
     public static void Fade(int identifier,int outOrIn)
     {
         isFading[outOrIn, identifier] = true;
-    }
+    }//控制渐入渐出方法
     public static void Open(int owner, int land)
     {
 
@@ -44,8 +45,8 @@ public static class ReactCharaInfo
         Debug.Log("CvInfoOpen");
         Fade(0, 1);
 
-    }//打开
-    public static void Refresh(int owner, int land)
+    }//打开角色/地图信息窗口的方法
+    public static void Refresh(int owner, int land)//刷新角色/信息窗口 传入参数:int owner 被选中角色的编号/未选中则为0  int land地形编号
     {
     	gos[45].GetComponent<Text>().text = "学分：" + gos[38].GetComponent<GameplayEvent>().score + "\n局数：" + gos[38].GetComponent<GameplayEvent>().round;
         if (owner != 0)//landform
@@ -96,54 +97,19 @@ public static class ReactCharaInfo
             gos[37].gameObject.SetActive(true);
         }
         gos[41].GetComponent<Text>().text = landDescription[land];
-        //gos[42].GetComponent<Image>().sprite = landImages[0];landImages[0]**还有预览**！
-        /*
         
-        gos[18] = cvWeapon;//18
-        gos[19] = cvRack;//19
-        gos[22] = sldMag;//22
-        gos[23] = txtValueMag_;//23
-        gos[24] = sldExp_;//24
-        gos[25] = txtValueExp_;//25
-        gos[27] = cvItemDes;//27
-        gos[28] = txtItemDes;//28
-        gos[29] = CvWeaponItem1;//29
-        gos[30] = CvWeaponItem2;//30
-        gos[31] = CvWeaponItem3;//31
-        gos[32] = CvWeaponItem4;//32
-        gos[33] = CvWeaponItem5;//33
-        gos[34] = CvWeaponItem6;//34
-        gos[24] = sldExp_;//24
-        gos[25] = txtValueExp_;//25
-        gos[27] = cvItemDes;//27
-        gos[28] = txtItemDes;//28
-        gos[29] = CvWeaponItem1;//29
-        gos[30] = CvWeaponItem2;//30
-        gos[31] = CvWeaponItem3;//31
-        gos[32] = CvWeaponItem4;//32
-        gos[33] = CvWeaponItem5;//33
-        gos[34] = CvWeaponItem6;//34
-        gos[35] = Canvas;
-        gos[36] = cvInfoChara;
-        gos[37] = cvInfoLand;
-        gos[38] = camera;
-        gos[39] = imgWeapon;
-        gos[40] = imgRack;
-        gos[41] = txtLandDes;
-        gos[42] = imgLandDes;
-        */
 
     }//刷新
-    public static void RefreshRound()
+    public static void RefreshRound()//成绩与局数窗口刷新
     {
         gos[45].GetComponent<Text>().text = "学分：" + gos[38].GetComponent<GameplayEvent>().score + "\n局数：" + gos[38].GetComponent<GameplayEvent>().round;
     }
-    public static void Close()
+    public static void Close()//关闭角色/地形信息窗口
     {
         isFading[0, 0] = true;
     }
-    public static void DescribeItem(int typ, int id)
-    {//描述文本在角色charatmp_charainfo
+    public static void DescribeItem(int typ, int id)//描述文本在角色charatmp_charainfo
+    {
         if (typ == 0)
         {
             gos[28].GetComponent<Text>().text = charatmp_charainfo.arsenal[id].des;
@@ -170,8 +136,9 @@ public static class ReactCharaInfo
             gos[34].GetComponent<Image>().color = DefaultColor;
         }
         gos[typ * 3 + id + 29].GetComponent<Image>().color = SelectedColor;
-    }
-    public static void DisDescribeItem()
+    }//描述文本在角色charatmp_charainfo
+
+    public static void DisDescribeItem()//停止描述文本在角色charatmp_charainfo
     {
         for(int i = 0;i < 6; i++)
         {
@@ -184,11 +151,6 @@ public static class ReactCharaInfo
     
     public static void DetaileOprt(int id,int openOrClose)
     {
-        /* imgChara;//16
-            cvLandform;//17
-            cvWeapon;//18
-            cvRack;//19
-        */
         DisDescribeItem();
         Fade(id,openOrClose);
     }
